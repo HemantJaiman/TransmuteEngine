@@ -1,0 +1,6 @@
+fastapi
+redis
+langgraph
+pydantic-ai
+tree-sitter-languages
+uvicorn

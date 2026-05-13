@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "transmute-engine"
+version = "0.1.0"
+description = "Autonomous enterprise codebase migration framework"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "redis",
+    "langgraph",
+    "pydantic-ai",
+    "tree-sitter-languages",
+    "uvicorn"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
