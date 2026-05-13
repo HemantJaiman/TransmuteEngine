@@ -1,6 +1,6 @@
 # Transmute Engine
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/transmute-engine?style=social)](https://github.com/yourusername/transmute-engine)
+[![GitHub stars](https://img.shields.io/github/stars/HemantJaiman/TransmuteEngine?style=social)](https://github.com/HemantJaiman/TransmuteEngine)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 **An open-source, multi-agent enterprise codebase migration framework.**
