@@ -13,6 +13,7 @@ src/ingestion/legacy_codebase/api.py
 src/ingestion/legacy_codebase/auth.py
 src/ingestion/legacy_codebase/database.py
 src/queues/__init__.py
+src/queues/broker.py
 src/queues/worker.py
 src/transmute_engine.egg-info/PKG-INFO
 src/transmute_engine.egg-info/SOURCES.txt
