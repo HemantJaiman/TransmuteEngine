@@ -1,5 +1,9 @@
-fastapi[all]
+fastapi
+uvicorn
 redis
 langgraph
 pydantic-ai
-tree-sitter
+tree-sitter-languages
+python-dotenv
+google-generativeai
+openai

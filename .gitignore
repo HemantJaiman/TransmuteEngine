@@ -1,0 +1,17 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Local Testing Data
+legacy_codebase/
+modernized_codebase/
+
+# OS files
+.DS_Store
