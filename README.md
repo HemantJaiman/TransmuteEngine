@@ -3,7 +3,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/HemantJaiman/TransmuteEngine?style=social)](https://github.com/HemantJaiman/TransmuteEngine)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-![Transmute Architecture](architecture.png)
 
 **A deterministic, self-healing AI Swarm for migrating enterprise codebases.**
 
@@ -65,7 +64,7 @@ An abstraction layer that completely decouples the Swarm from specific AI provid
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/HemantJaiman/TransmuteEngine.git](https://github.com/HemantJaiman/TransmuteEngine.git)
+   git clone https://github.com/HemantJaiman/TransmuteEngine.git
    cd TransmuteEngine
    ```
 
