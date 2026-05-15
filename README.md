@@ -1,129 +1,117 @@
-# Transmute Engine
+# 🧬 Transmute Engine
 
 [![GitHub stars](https://img.shields.io/github/stars/HemantJaiman/TransmuteEngine?style=social)](https://github.com/HemantJaiman/TransmuteEngine)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-**An open-source, multi-agent enterprise codebase migration framework.**
+![Transmute Architecture](architecture.png)
 
-Transmute Engine autonomously refactors and migrates legacy codebases (e.g., legacy Java/Vue) into modern stacks using distributed AI workflows. Built for enterprise scale, it moves beyond simple LLM wrappers by utilizing AST parsing, message queuing, and deterministic state machines.
+**A deterministic, self-healing AI Swarm for migrating enterprise codebases.**
+
+Most AI coding assistants fail on large-scale migrations. They read code as flat text, lose architectural context, and crash when the LLM inevitably outputs a syntax error. 
+
+**Transmute Engine** solves this by wrapping probabilistic AI models (Gemini, GPT-4, Llama 3) inside a strict, fault-tolerant distributed system. It parses Abstract Syntax Trees (AST), calculates mathematical dependencies, queues tasks via a message broker, and uses a LangGraph state machine to translate, validate, and compile code dynamically.
 
 ---
 
-🧬 Transmute Engine
-An enterprise-grade, deterministic AI Swarm for migrating legacy codebases.
+## 🏗️ System Architecture
 
-Traditional AI coding assistants fail on large-scale migrations because they lack structural context and crash when the LLM hallucinates bad syntax. Transmute Engine solves this by wrapping probabilistic AI models (Gemini, GPT-4, Llama 3) in a deterministic, fault-tolerant distributed system.
+To handle enterprise-scale repositories, Transmute is decoupled into four highly fault-tolerant layers:
 
-Instead of blindly feeding files to an LLM, Transmute parses the Abstract Syntax Tree (AST), maps mathematical dependencies, queues tasks via a message broker, and uses a self-healing LangGraph state machine to translate, validate, and compile the code.
+### 1. Deep Ingestion (AST & Graph Theory)
+You can't migrate `api.py` if the AI doesn't know what `database.py` does. 
+* **Tree-sitter:** Parses legacy code into an AST to extract exact module dependencies instead of guessing based on text search.
+* **Kahn’s Algorithm:** Executes a Topological Sort to calculate the mathematically perfect execution order. Standalone files are processed first; files that depend on them are processed later.
+* **Tarjan’s Algorithm:** Actively hunts for Strongly Connected Components (SCCs). If it detects a circular dependency (e.g., File A imports File B, and File B imports File A), it bundles them into a single task so the AI has the exact context needed to merge and break the cycle.
 
-🏗️ System Architecture
-Transmute is built on a decoupled, cloud-native microservices architecture, separated into four distinct layers:
+### 2. The Distributed Spine (Redis & FastAPI)
+Migrating a codebase synchronously blocks the main thread and hits API rate limits immediately.
+* **FastAPI Orchestrator:** Acts as the traffic controller, handling UI requests and mapping the initial graph.
+* **Redis Task Queue (`migration_tasks`):** Tasks are pushed to a persistent queue, allowing horizontal scaling. Multiple AI worker nodes can run on separate machines and pull tasks concurrently.
+* **Redis Pub/Sub (`swarm_logs`):** Workers broadcast granular, real-time status updates ("Analyzing AST", "Compiling...") back to the Orchestrator.
 
-1. The Orchestrator (FastAPI)
-The centralized controller and API gateway. It serves the static frontend and exposes REST/WebSocket endpoints.
+### 3. The Swarm State Machine (LangGraph)
+Workers don't just make an API call; they invoke a deterministic State Machine. All agents read and write to a shared `MigrationState`.
+* **Context Agent:** Reads the source files from disk and formats the legacy code for the AI.
+* **Translation Agent:** Uses Pydantic schemas to force the LLM to return strictly typed, pure code without conversational filler.
+* **Validation Agent (The Critic):** Compiles the LLM's output using Python's native `ast.parse()`. 
+* **Self-Healing Loop:** If the code is broken, the Validator blocks the disk write, captures the exact Python `SyntaxError`, and routes the state backward to the Translator to fix its own mistake (up to 3 retries).
 
-/api/v1/migrate: The ingestion trigger. It accepts user constraints, parses the codebase, maps the execution graph, and pushes tasks to Redis.
+### 4. The Model Factory
+An abstraction layer that completely decouples the Swarm from specific AI providers. This prevents vendor lock-in and allows the system to switch "brains" instantly. Currently supports:
+* **Google Gemini** (Optimized for Gemini 2.5 Flash)
+* **OpenAI** (GPT-4o)
+* **Ollama** (Local, free, rate-limitless execution via Llama 3)
 
-/ws/logs: A WebSocket connection that listens to Redis Pub/Sub to stream live telemetry from the Swarm directly to the frontend.
+---
 
-/api/v1/generate_guide & /api/v1/download: Post-migration endpoints that use the AI to compile a setup guide (MIGRATION_GUIDE.md) and package the result into a .zip archive.
+## 🔀 Data Flow: How It Works
 
-2. The Distributed Spine (Redis)
-We do not block the main thread. All migration tasks are handled asynchronously to allow for horizontal scaling of AI Worker nodes.
+1. **Upload:** User selects a legacy directory and target stack via the Web UI.
+2. **Map:** FastAPI builds the AST DAG, resolves circular dependencies via Tarjan's, and pushes a sorted task list to Redis.
+3. **Process:** Background Python workers pull tasks. The LangGraph agents context-gather, translate, and self-correct syntax errors.
+4. **Telemetry:** As workers process files, they push logs to Redis Pub/Sub. FastAPI streams these via **WebSockets** to the UI's live terminal.
+5. **Finalize:** Once the queue hits zero, the AI generates a `MIGRATION_GUIDE.md` and packages the new codebase into a downloadable `.zip`.
 
-Task Queue (migration_tasks): The Orchestrator pushes finalized migration payloads here. Workers continuously poll this queue.
+---
 
-Pub/Sub Channel (swarm_logs): Workers publish granular, real-time status updates ("Analyzing AST", "Compiling...") to this channel, which the Orchestrator catches and pipes to the UI.
+## 🚀 Getting Started
 
-3. The AI Swarm (LangGraph State Machine)
-Workers do not make simple API calls; they invoke a deterministic State Machine. All agents read and write to a shared MigrationState dictionary.
+### Prerequisites
+* Python 3.10+
+* Redis (Running locally or via Docker)
+* API Keys (Google AI Studio or OpenAI)
 
-Context Agent: Reads the source file(s) from disk and loads the legacy code into memory.
+### Installation
 
-Translator Agent: Uses strict Pydantic schemas to force the LLM to return purely compiled code (no conversational filler).
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/HemantJaiman/TransmuteEngine.git](https://github.com/HemantJaiman/TransmuteEngine.git)
+   cd TransmuteEngine
+   ```
 
-Validation Agent (The Critic): Compiles the LLM's output using Python's native ast.parse().
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Self-Healing: If the code throws a SyntaxError, the Validator blocks the write operation, captures the exact traceback, and routes the state backward to the Translator for a retry (up to 3 attempts).
+3. **Configure Environment:**
+   Create a `.env` file in the root directory:
+   ```bash
+   GEMINI_API_KEY=your_google_ai_key_here
+   OPENAI_API_KEY=your_openai_key_here  # Optional
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   ```
 
-4. The Model Factory
-An abstraction layer that decouples the Swarm from specific AI providers. This ensures the system never breaks if an API changes. It currently routes to:
+4. **Start the Redis Broker:**
+   ```bash
+   docker run -d -p 6379:6379 redis
+   ```
 
-Google Gemini (via google-genai SDK)
+## 🕹️ Usage
 
-OpenAI GPT-4o
-
-Local Llama 3 (via Ollama for free, rate-limitless execution)
-
-🔀 Data Flow & Algorithms
-Phase 1: Deep Ingestion
-Tree-sitter AST: Parses the legacy codebase to extract raw import statements and map module dependencies accurately.
-
-Tarjan’s Algorithm (SCC): Scans the graph for Strongly Connected Components. If a circular dependency is found (e.g., File A imports File B, and File B imports File A), they are grouped into a single "SCC Bundle" list.
-
-Kahn’s Algorithm (Topological Sort): Calculates the mathematically perfect execution order. Standalone files are processed first; files that depend on them are processed later.
-
-Phase 2: Execution & Self-Healing
-A Worker pulls a file (or an SCC Bundle) from Redis.
-
-If it encounters an SCC Bundle, the Context Agent merges the files together, and the Translator explicitly prompts the LLM to resolve the circular dependency into a single cohesive file.
-
-The LLM translates the logic.
-
-If rate limits (429) or syntax errors occur, the state machine gracefully catches them, logs them via Pub/Sub, and retries the specific node without crashing the worker.
-
-🚀 Getting Started
-Prerequisites
-Python 3.10+
-
-Redis (Running locally or via Docker)
-
-API Keys (Google Gemini or OpenAI)
-
-Installation
-Clone the repository:
-
-Bash
-git clone https://github.com/yourusername/transmute-engine.git
-cd transmute-engine
-Install dependencies:
-
-Bash
-pip install -r requirements.txt
-Configure Environment:
-Create a .env file in the root directory:
-
-Code snippet
-GEMINI_API_KEY=your_google_ai_key_here
-OPENAI_API_KEY=your_openai_key_here  # Optional
-REDIS_HOST=localhost
-REDIS_PORT=6379
-Start the Redis Broker:
-
-Bash
-docker run -d -p 6379:6379 redis
-🕹️ Usage
 Transmute requires two terminals to run its decoupled architecture.
 
-Terminal 1: Start the Orchestrator & UI
+### Terminal 1: Start the Orchestrator & UI
 
-Bash
+```bash
 uvicorn src.api.main:app --reload
-Terminal 2: Boot an AI Worker Node
+```
 
-Bash
+### Terminal 2: Boot an AI Worker Node
+
+```bash
 python src/queues/worker.py
-Run a Migration:
+```
 
-Open your browser to http://localhost:8000.
+### Run a Migration:
 
-Upload your legacy codebase folder.
+1. Open your browser to **http://localhost:8000**.
+2. Upload your legacy codebase folder.
+3. Select your Target Architecture (e.g., FastAPI + Vue 3) and your preferred AI Engine.
+4. Click **Initialize Swarm** and watch the live telemetry stream via WebSockets.
+5. Once complete, click **Generate Setup Guide**, then download your fully modernized `.zip` codebase.
 
-Select your Target Architecture (e.g., FastAPI + Vue 3) and your preferred AI Engine.
+## 🤝 Contributing
 
-Click Initialize Swarm and watch the live telemetry stream via WebSockets.
-
-Once complete, click Generate Setup Guide, then download your fully modernized .zip codebase.
-
-🤝 Contributing
-Migrations are mathematically complex. If you have optimizations for the AST parser or the LangGraph loop efficiency, PRs are welcome.
+Migrations are mathematically complex. If you have optimizations for the AST parser, Tree-sitter implementations for new legacy languages (e.g., C#, Ruby), or improvements for the LangGraph loop efficiency, open a PR. Focus on individual modules (ingestion, core_agents, or queues) without needing to understand the entire stack.  
