@@ -4,7 +4,6 @@ pyproject.toml
 src/api/__init__.py
 src/api/main.py
 src/core_agents/__init__.py
-src/core_agents/llm_factory.py
 src/core_agents/models.py
 src/core_agents/schemas.py
 src/core_agents/state.py

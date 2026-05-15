@@ -1,8 +1,8 @@
-from typing import TypedDict, Optional
+from typing import TypedDict, Optional, Union, List
 
 class MigrationState(TypedDict):
     # Core File Data
-    file_path: str
+    file_path: Union[str, List[str]]
     legacy_code: str
     translated_code: Optional[str]
     

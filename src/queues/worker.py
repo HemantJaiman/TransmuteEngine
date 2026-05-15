@@ -15,7 +15,6 @@ class SwarmWorker:
         self.broadcast("🤖 AI Worker Node online and listening.", "success")
 
     def broadcast(self, message: str, msg_type: str = "info"):
-        """Sends logs to the terminal AND to the Web UI simultaneously."""
         print(message)
         payload = json.dumps({"message": message, "type": msg_type})
         self.client.publish("swarm_logs", payload)
@@ -29,11 +28,17 @@ class SwarmWorker:
 
     def _process_task(self, task: dict):
         file_path = task.get('file_path')
-        filename = os.path.basename(file_path)
+        
+        # --- THE FIX: Handle SCC Bundles ---
+        if isinstance(file_path, list):
+            # Extract names and join them (e.g., "auth.py + database.py")
+            filename = "SCC_BUNDLE: " + " + ".join([os.path.basename(f) for f in file_path])
+        else:
+            filename = os.path.basename(file_path)
         
         self.broadcast(f"\n=====================================")
-        self.broadcast(f"🚀 PROCESSING: {filename}")
-        self.broadcast(f"🧠 MODEL: {task.get('model_choice')} | 🎯 TARGET: {task.get('target_stack')}")
+        self.broadcast(f"🚀 INITIATING: {filename}")
+        self.broadcast(f"🧠 ENGINE: {task.get('model_choice')} | 🎯 TARGET: {task.get('target_stack')}")
         
         initial_state = {
             "file_path": file_path, "legacy_code": "", "translated_code": None,
@@ -42,23 +47,15 @@ class SwarmWorker:
         }
         
         try:
-            # THE MAGIC: We use .stream() to watch the AI think in real-time
-            final_state = None
-            for output in migration_swarm.stream(initial_state):
-                for agent_name, state_update in output.items():
-                    final_state = state_update
-                    if state_update.get("error_message"):
-                        self.broadcast(f"  [{agent_name}] ❌ ERROR: {state_update['error_message']}", "error")
-                    else:
-                        self.broadcast(f"  [{agent_name}] ✅ Step completed successfully.", "info")
-
+            final_state = migration_swarm.invoke(initial_state)
+            
             if final_state and not final_state.get("error_message"):
-                self.broadcast(f"✨ SUCCESS: {filename} migrated completely.\n", "success")
+                self.broadcast(f"✨ SUCCESS: {filename} migrated completely.", "success")
             else:
-                self.broadcast(f"💥 FAILED: {filename} could not be migrated.\n", "error")
+                self.broadcast(f"💥 FAILED: {filename} failed after retries.", "error")
 
         except Exception as e:
-            self.broadcast(f"💥 CRITICAL ERROR on {filename}: {str(e)}\n", "error")
+            self.broadcast(f"💥 CRITICAL ERROR on {filename}: {str(e)}", "error")
 
 if __name__ == "__main__":
     worker = SwarmWorker()

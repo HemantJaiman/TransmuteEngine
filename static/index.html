@@ -6,85 +6,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transmute Engine | AI Swarm Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
     <style>
-        /* Custom Terminal Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #1f2937;
+            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #4b5563;
-            border-radius: 4px;
+            background: #374151;
+            border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
+            background: #4b5563;
+        }
+
+        .glass {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
 
-<body class="bg-gray-900 text-gray-100 min-h-screen font-sans antialiased flex flex-col items-center py-10">
+<body
+    class="bg-[#0f111a] text-gray-100 min-h-screen font-sans antialiased flex flex-col items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gray-800 via-[#0f111a] to-[#0f111a]">
 
-    <div class="max-w-5xl w-full px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        <!-- Left Column: Controls -->
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-8 shadow-2xl">
-            <div class="mb-8">
-                <h1
-                    class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-                    Transmute Engine</h1>
-                <p class="text-gray-400 text-sm mt-2">Autonomous Enterprise Migration Swarm</p>
+        <!-- Left Column: Controls (Span 5) -->
+        <div
+            class="lg:col-span-5 glass border border-gray-700/50 rounded-2xl p-8 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden">
+            <div
+                class="absolute -top-20 -left-20 w-64 h-64 bg-blue-600 rounded-full mix-blend-multiply filter blur-[100px] opacity-20">
             </div>
 
-            <form id="migrationForm" class="space-y-5">
-                <!-- Target Directory -->
+            <div class="mb-8 relative z-10">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4 tracking-wide uppercase">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                    System Online
+                </div>
+                <h1
+                    class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-teal-400 to-emerald-400 tracking-tight pb-1">
+                    Transmute Engine
+                </h1>
+                <p class="text-gray-400 text-sm mt-2 font-medium">Autonomous Enterprise Migration Swarm</p>
+            </div>
+
+            <form id="migrationForm" class="space-y-6 relative z-10 flex-1">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Target Directory (Local Path)</label>
-                    <input type="text" id="targetDirectory" value="legacy_codebase"
-                        class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Codebase Source</label>
+                    <label for="folderInput"
+                        class="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-600 border-dashed rounded-xl cursor-pointer bg-gray-800/50 hover:bg-gray-800 hover:border-blue-500 transition-all group">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <p class="text-sm text-gray-400"><span class="font-semibold text-blue-400">Click to
+                                    browse</span> or drag folder</p>
+                        </div>
+                        <input id="folderInput" type="file" webkitdirectory directory multiple class="hidden" />
+                    </label>
+                    <input type="hidden" id="targetDirectory" value="legacy_codebase">
+                    <p id="selectedFolderText" class="text-xs text-emerald-400 mt-2 font-mono">📁 Default:
+                        legacy_codebase</p>
                 </div>
 
-                <!-- Target Stack Dropdown -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Target Architecture</label>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Target Architecture</label>
                     <select id="targetStack"
-                        class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-gray-200 focus:outline-none focus:border-blue-500">
+                        class="w-full bg-gray-900/80 border border-gray-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-blue-500">
                         <option value="FastAPI Backend and Vue.js 3 Frontend">FastAPI (Python) + Vue.js 3</option>
                         <option value="Node.js Express and React 18">Node.js + React 18</option>
-                        <option value="Golang Backend and SvelteKit">Golang + SvelteKit</option>
-                        <option value="Spring Boot (Java) and Angular">Spring Boot + Angular</option>
                     </select>
                 </div>
 
-                <!-- Model Choice Dropdown -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">AI Swarm Engine</label>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">AI Swarm Engine</label>
                     <select id="modelChoice"
-                        class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-gray-200 focus:outline-none focus:border-emerald-500">
-                        <option value="gemini">Gemini 1.5 Pro (Google)</option>
+                        class="w-full bg-gray-900/80 border border-gray-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-emerald-500">
+                        <option value="gemini">Gemini 2.5 Flash (Google)</option>
                         <option value="gpt4">GPT-4o (OpenAI)</option>
-                        <option value="llama3">Llama 3 (Local/Free)</option>
                     </select>
                 </div>
 
-                <!-- Custom Instructions -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Custom Migration Directives</label>
-                    <textarea id="customInstructions" rows="3"
-                        class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-gray-200 focus:outline-none focus:border-blue-500"
-                        placeholder="e.g., 'Use strictly typed Vue Composition API without class components. Add Pytest coverage for all backend logic.'"></textarea>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Custom Directives</label>
+                    <textarea id="customInstructions" rows="2"
+                        class="w-full bg-gray-900/80 border border-gray-600 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-blue-500 placeholder-gray-600 resize-none"
+                        placeholder="e.g., 'Use functional components...'"></textarea>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" id="submitBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg transition-all flex justify-center items-center gap-2">
+                    class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
                     <svg id="spinner" class="animate-spin h-5 w-5 hidden text-white" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -93,66 +112,146 @@
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                         </path>
                     </svg>
-                    <span>Initialize Migration Swarm</span>
+                    <span>Initialize Swarm</span>
                 </button>
             </form>
+
+            <!-- Post-Migration Action Panel (Hidden until complete) -->
+            <div id="actionPanel"
+                class="mt-6 hidden relative z-10 p-5 bg-emerald-900/20 border border-emerald-500/30 rounded-xl space-y-3">
+                <h3 class="text-sm font-bold text-emerald-400 mb-1 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Migration Complete
+                </h3>
+
+                <button type="button" id="guideBtn"
+                    class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-200 font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    1. Generate Setup Guide
+                </button>
+
+                <a href="/api/v1/download" id="downloadBtn"
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-900/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    2. Download .ZIP Codebase
+                </a>
+            </div>
         </div>
 
-        <!-- Right Column: Terminal Output -->
-        <div class="bg-[#0d1117] border border-gray-700 rounded-xl p-6 shadow-2xl flex flex-col h-[600px]">
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-700 pb-3">
-                <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                <span class="ml-2 text-xs text-gray-400 font-mono tracking-wider">SYSTEM LOGS</span>
+        <!-- Right Column: Terminal Output (Span 7) -->
+        <div
+            class="lg:col-span-7 bg-[#090b10] border border-gray-800 rounded-2xl p-1 shadow-2xl flex flex-col h-[700px]">
+            <div class="bg-[#12151f] flex items-center gap-2 px-4 py-3 rounded-t-xl border-b border-gray-800">
+                <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                <div class="mx-auto flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <span class="text-xs text-gray-500 font-mono font-semibold tracking-widest">SWARM_TELEMETRY</span>
+                </div>
             </div>
-
-            <div id="terminal" class="flex-1 overflow-y-auto font-mono text-sm text-green-400 space-y-2">
-                <div>> System ready. Waiting for target configuration...</div>
+            <div id="terminal"
+                class="flex-1 overflow-y-auto p-5 font-mono text-[13px] leading-relaxed space-y-1.5 selection:bg-blue-500/30">
+                <div class="text-gray-500">> Transmute OS v2.0.4 loaded. Ready.</div>
             </div>
         </div>
-
     </div>
 
     <script>
         const form = document.getElementById('migrationForm');
         const submitBtn = document.getElementById('submitBtn');
+        const actionPanel = document.getElementById('actionPanel');
+        const guideBtn = document.getElementById('guideBtn');
         const spinner = document.getElementById('spinner');
         const terminal = document.getElementById('terminal');
+        const folderInput = document.getElementById('folderInput');
+        const targetDirInput = document.getElementById('targetDirectory');
+        const selectedFolderText = document.getElementById('selectedFolderText');
 
-        // --- Robust Auto-Reconnecting WebSocket ---
+        let totalFilesToProcess = 0;
+        let filesCompleted = 0;
+        let wsReconnectTimeout;
+        let queuePollingInterval; // NEW: Fallback tracker
+
+        folderInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const folderName = e.target.files[0].webkitRelativePath.split('/')[0];
+                targetDirInput.value = folderName;
+                selectedFolderText.textContent = `📁 Selected: ${folderName}`;
+            }
+        });
+
         let ws;
         function connectWebSocket() {
+            if (ws && ws.readyState === WebSocket.OPEN) return;
+
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             ws = new WebSocket(`${protocol}//${window.location.host}/ws/logs`);
 
-            ws.onopen = () => {
-                logToTerminal("[SYSTEM] Live connection established.", "success");
-            };
+            ws.onopen = () => logToTerminal("[WS] Live telemetry active.", "success");
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
+                if (data.type === 'ping') return;
+
                 logToTerminal(data.message, data.type);
+
+                if (data.message.includes('✨ SUCCESS') || data.message.includes('💥 FAILED')) {
+                    filesCompleted++;
+                    checkCompletion();
+                }
             };
 
             ws.onclose = () => {
-                logToTerminal("[SYSTEM] Connection lost. Reconnecting in 3 seconds...", "error");
-                // The "Self-Healing" UI: Try to reconnect every 3 seconds
-                setTimeout(connectWebSocket, 3000);
-            };
-
-            ws.onerror = (err) => {
-                ws.close(); // Force the close event to trigger a reconnect
+                clearTimeout(wsReconnectTimeout);
+                wsReconnectTimeout = setTimeout(connectWebSocket, 3000);
             };
         }
-
-        // Initialize the connection
         connectWebSocket();
+
+        function checkCompletion() {
+            if (totalFilesToProcess > 0 && filesCompleted >= totalFilesToProcess) {
+                finalizeUI();
+            }
+        }
+
+        function finalizeUI() {
+            // Prevent duplicate triggers
+            if (!actionPanel.classList.contains('hidden')) return;
+
+            clearInterval(queuePollingInterval); // Stop polling
+            logToTerminal("\n=====================================");
+            logToTerminal("🏁 SWARM EXECUTION COMPLETE.");
+            logToTerminal("=====================================");
+
+            actionPanel.classList.remove('hidden');
+            actionPanel.classList.add('animate-pulse');
+            setTimeout(() => actionPanel.classList.remove('animate-pulse'), 2000);
+        }
 
         function logToTerminal(message, type = 'info') {
             const div = document.createElement('div');
-            if (type === 'error') div.className = 'text-red-400';
-            else if (type === 'success') div.className = 'text-blue-400';
+            if (message.includes('❌') && !message.includes('💥')) div.className = 'text-yellow-500';
+            else if (message.includes('💥') || type === 'error') div.className = 'text-red-500 font-bold';
+            else if (message.includes('✨') || message.includes('🏁') || type === 'success') div.className = 'text-emerald-400 font-bold';
+            else if (message.includes('🚀') || message.includes('🧠')) div.className = 'text-blue-400 font-semibold';
+            else if (message.includes('================')) div.className = 'text-gray-600';
+            else div.className = 'text-gray-300';
+
             div.textContent = `> ${message}`;
             terminal.appendChild(div);
             terminal.scrollTop = terminal.scrollHeight;
@@ -161,20 +260,21 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // UI Loading State
             submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
             spinner.classList.remove('hidden');
-            terminal.innerHTML = ''; // clear terminal
+            actionPanel.classList.add('hidden');
+            terminal.innerHTML = '';
+            totalFilesToProcess = 0;
+            filesCompleted = 0;
 
             const payload = {
-                target_directory: document.getElementById('targetDirectory').value,
+                target_directory: targetDirInput.value,
                 target_stack: document.getElementById('targetStack').value,
                 model_choice: document.getElementById('modelChoice').value,
                 custom_instructions: document.getElementById('customInstructions').value
             };
 
-            logToTerminal(`Initializing connection to Orchestrator API...`);
             logToTerminal(`Mapping Dependency Graph for /${payload.target_directory}...`);
 
             try {
@@ -188,21 +288,58 @@
 
                 if (response.ok) {
                     logToTerminal(`[SUCCESS] ${data.message}`, 'success');
-                    logToTerminal(`Total files queued for Swarm: ${data.total_files}`);
-                    logToTerminal(`Execution Order:`);
-                    data.execution_order.forEach((file, index) => {
-                        logToTerminal(`  ${index + 1}. ${file}`);
-                    });
-                    logToTerminal(`AI Worker nodes are now processing tasks in the background. Check your Python terminal!`);
+                    totalFilesToProcess = data.total_files;
+                    logToTerminal(`Total files queued: ${totalFilesToProcess}\n`);
+
+                    // --- THE FIX: Bulletproof State Polling ---
+                    // If the WebSocket drops and misses the completion message,
+                    // this backup loop checks the API directly every 3 seconds.
+                    clearInterval(queuePollingInterval);
+                    queuePollingInterval = setInterval(async () => {
+                        try {
+                            const statusRes = await fetch('/api/v1/status');
+                            const statusData = await statusRes.json();
+                            // If the queue is empty, the Swarm is done!
+                            if (statusData.pending_tasks === 0 && totalFilesToProcess > 0) {
+                                filesCompleted = totalFilesToProcess; // Force sync
+                                finalizeUI();
+                            }
+                        } catch (err) { }
+                    }, 3000);
+
                 } else {
                     logToTerminal(`[ERROR] ${data.detail}`, 'error');
                 }
             } catch (error) {
-                logToTerminal(`[CRITICAL] Cannot connect to API. Is the server running?`, 'error');
+                logToTerminal(`[CRITICAL] Cannot connect to API.`, 'error');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 spinner.classList.add('hidden');
+            }
+        });
+
+        guideBtn.addEventListener('click', async () => {
+            logToTerminal(`\nCompiling MIGRATION_GUIDE.md...`);
+            guideBtn.disabled = true;
+            guideBtn.innerHTML = `Generating...`;
+
+            try {
+                await fetch('/api/v1/generate_guide', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target_stack: document.getElementById('targetStack').value,
+                        model_choice: document.getElementById('modelChoice').value,
+                        custom_instructions: document.getElementById('customInstructions').value
+                    })
+                });
+            } catch (error) {
+                logToTerminal(`[CRITICAL] API connection failed.`, 'error');
+            } finally {
+                guideBtn.disabled = false;
+                guideBtn.innerHTML = `1. Generate Setup Guide (Done)`;
+                guideBtn.classList.replace('text-gray-200', 'text-emerald-400');
             }
         });
     </script>

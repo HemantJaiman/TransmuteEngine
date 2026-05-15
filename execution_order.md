@@ -1,4 +1,6 @@
 
+-> docker compose up -d redis
+
 step1: First run this command::
 
 ->   pip install -e .

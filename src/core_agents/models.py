@@ -1,6 +1,12 @@
 import os
+import warnings
 from openai import OpenAI
+
+# Suppress the Google SDK deprecation warning to keep the terminal clean
+warnings.filterwarnings("ignore", category=FutureWarning, module="google.generativeai")
+
 import google.generativeai as genai
+
 
 class ModelFactory:
     """
@@ -23,7 +29,6 @@ class ModelFactory:
             return OpenAI(api_key=api_key)
             
         elif choice == "llama3":
-            # Points to your local Ollama instance (Free)
             return OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
             
         raise ValueError(f"Model '{choice}' is not supported yet.")
