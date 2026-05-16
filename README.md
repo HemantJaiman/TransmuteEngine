@@ -95,9 +95,7 @@ For enterprise environments with strict data compliance policies, or to bypass t
    ```bash
    ollama pull llama3.1:8b   # Optional
    ```
-3. **The Docker Network Bridge:** Ollama runs on your host machine at localhost:11434. Because Transmute Engine runs inside isolated Docker containers, localhost inside the container will not resolve to the host machine.
-
-The 'docker-compose.yml' is pre-configured with extra_hosts: '["host.docker.internal:host-gateway"]' to bridge the container network to your host. The Swarm's 'ModelFactory' intercepts the API call and natively routes it to 'http://host.docker.internal:11434/v1'.
+3. **The Docker Network Bridge:** Ollama runs on your host machine at localhost:11434. Because Transmute Engine runs inside isolated Docker containers, localhost inside the container will not resolve to the host machine.The 'docker-compose.yml' is pre-configured with extra_hosts: '["host.docker.internal:host-gateway"]' to bridge the container network to your host. The Swarm's 'ModelFactory' intercepts the API call and natively routes it to 'http://host.docker.internal:11434/v1'.
 
 4. **Execute:** In the UI, choose "Llama 3.1 (Local)" from the Engine dropdown in the Web UI, and the Swarm will utilize your local GPU for the entire migration..
 
