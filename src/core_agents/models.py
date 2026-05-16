@@ -28,7 +28,8 @@ class ModelFactory:
                 raise ValueError("OPENAI_API_KEY not found in .env file")
             return OpenAI(api_key=api_key)
             
-        elif choice == "llama3":
-            return OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
-            
+        elif "llama3" in choice:
+            # THE FIX: 'host.docker.internal' bridges the Docker container to the host machine's Ollama!
+            return OpenAI(base_url="http://host.docker.internal:11434/v1", api_key="ollama")
+        
         raise ValueError(f"Model '{choice}' is not supported yet.")

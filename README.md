@@ -57,7 +57,7 @@ An abstraction layer that completely decouples the Swarm from specific AI provid
 
 ### Prerequisites
 * Docker and Docker Compose installed
-* API Keys (Google AI Studio or OpenAI)
+* API Keys (Google AI Studio or OpenAI) - *Optional if running locally via Ollama*
 
 ### Installation
 
@@ -85,6 +85,21 @@ An abstraction layer that completely decouples the Swarm from specific AI provid
 3. Select your Target Architecture (e.g., FastAPI + Vue 3) and your preferred AI Engine.
 4. Click **Initialize Swarm** and watch the live telemetry stream via WebSockets.
 5. Once complete, click **Generate Setup Guide**, then download your fully modernized `.zip` codebase.
+
+## 🧠 Local LLM Execution (Offline Mode)
+
+For enterprise environments with strict data compliance policies, or to bypass third-party API rate limits, Transmute Engine supports 100% offline execution using local GPUs.
+
+1. **Install Ollama:** Download and run [Ollama](https://ollama.com/) on your host machine.
+2. **Pull the Model:** Open a terminal on your host and download Llama 3.1:
+   ```bash
+   ollama pull llama3.1:8b   # Optional
+   ```
+3. **The Docker Network Bridge:** Ollama runs on your host machine at localhost:11434. Because Transmute Engine runs inside isolated Docker containers, localhost inside the container will not resolve to the host machine.
+
+The 'docker-compose.yml' is pre-configured with extra_hosts: '["host.docker.internal:host-gateway"]' to bridge the container network to your host. The Swarm's 'ModelFactory' intercepts the API call and natively routes it to 'http://host.docker.internal:11434/v1'.
+
+4. **Execute:** In the UI, choose "Llama 3.1 (Local)" from the Engine dropdown in the Web UI, and the Swarm will utilize your local GPU for the entire migration..
 
 ## 🤝 Contributing
 
