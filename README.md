@@ -56,52 +56,27 @@ An abstraction layer that completely decouples the Swarm from specific AI provid
 ## 🚀 Getting Started
 
 ### Prerequisites
-* Python 3.10+
-* Redis (Running locally or via Docker)
+* Docker and Docker Compose installed
 * API Keys (Google AI Studio or OpenAI)
 
 ### Installation
 
 1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/HemantJaiman/TransmuteEngine.git
-   cd TransmuteEngine
-   ```
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Configure Environment:**
+2. **Configure Environment:**
    Create a `.env` file in the root directory:
    ```bash
    GEMINI_API_KEY=your_google_ai_key_here
    OPENAI_API_KEY=your_openai_key_here  # Optional
-   REDIS_HOST=localhost
-   REDIS_PORT=6379
+
    ```
 
-4. **Start the Redis Broker:**
+4. **Launch the Engine:**
    ```bash
-   docker run -d -p 6379:6379 redis
+   docker compose up --build
    ```
 
 ## 🕹️ Usage
-
-Transmute requires two terminals to run its decoupled architecture.
-
-### Terminal 1: Start the Orchestrator & UI
-
-```bash
-uvicorn src.api.main:app --reload
-```
-
-### Terminal 2: Boot an AI Worker Node
-
-```bash
-python src/queues/worker.py
-```
 
 ### Run a Migration:
 

@@ -1,10 +1,14 @@
 FROM python:3.11-slim
 
+# Set the working directory
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy your entire project into the container first
 COPY . .
 
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Install the required packages
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install -e .
+
+# We leave CMD blank because docker-compose handles it

@@ -1,18 +1,6 @@
 version: '3.8'
 
 services:
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - redis
-    volumes:
-      - .:/app
-
   redis:
     image: redis:7-alpine
     ports:
@@ -20,6 +8,39 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # Pass API keys from your local .env file into the container
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+    # Explicitly start the FastAPI orchestrator
+    command: [ "uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
+
+  ai-worker:
+    build: .
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - redis
+    volumes:
+      # Mount the local directory so when the AI writes the modernized code, 
+      # it actually saves to your local computer's hard drive!
+      - .:/app
+    # Explicitly start the AI Swarm Worker
+    command: [ "python", "src/queues/worker.py" ]
 
 volumes:
   redis_data:
